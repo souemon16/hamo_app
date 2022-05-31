@@ -4,12 +4,12 @@ import 'package:hamo_app/presentation/resources/fonts_manager.dart';
 import 'package:hamo_app/presentation/resources/style_manager.dart';
 import 'package:hamo_app/presentation/resources/values_manager.dart';
 
-ThemeData _getApplicationTheme() {
+ThemeData getApplicationTheme() {
   return ThemeData(
     // Main colors of the app
     primaryColor: ColorManager.primary,
     primaryColorLight: ColorManager.primaryFill,
-    backgroundColor: ColorManager.secondary,
+    // backgroundColor: ColorManager.secondary,
     disabledColor: ColorManager.disableButton,
     colorScheme:
         ColorScheme.fromSwatch().copyWith(secondary: ColorManager.secondary),
