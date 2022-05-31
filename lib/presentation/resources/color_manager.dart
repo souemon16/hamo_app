@@ -10,6 +10,7 @@ class ColorManager {
   static Color shadowColor = HexColor.fromHex("#F7F7F7");
   static Color black = HexColor.fromHex("#262626");
   static Color hintColor = HexColor.fromHex("#9E9E9E");
+  static Color dotColor = HexColor.fromHex("#E0E0E0");
 }
 
 extension HexColor on Color {

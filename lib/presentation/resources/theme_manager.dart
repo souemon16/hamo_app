@@ -22,7 +22,7 @@ ThemeData getApplicationTheme() {
     ),
 
     // App bar of the theme
-    appBarTheme: AppBarTheme(backgroundColor: Colors.transparent),
+    appBarTheme: const AppBarTheme(backgroundColor: Colors.transparent),
 
     //Button Theme
     buttonTheme: ButtonThemeData(
@@ -30,15 +30,24 @@ ThemeData getApplicationTheme() {
         disabledColor: ColorManager.disableButton,
         buttonColor: ColorManager.primary),
 
+    //Elevated Button Theme
+    elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+            shape: const StadiumBorder(),
+            primary: ColorManager.primary,
+            textStyle: getSemiBoldTextStyle(color: ColorManager.secondary),
+            minimumSize: const Size(100, 60))),
+
     // Text Theme
     textTheme: TextTheme(
-        headline1: getSemiBoldTextStyle(
-            color: ColorManager.black, fontSize: FontSize.s16),
+        headline1:
+            getBoldTextStyle(color: ColorManager.black, fontSize: FontSize.s36),
         headline2: getMediumTextStyle(
             color: ColorManager.black, fontSize: FontSize.s14),
         subtitle1: getRegularTextStyle(color: ColorManager.black),
         caption: getLightTextStyle(color: ColorManager.black),
         bodyText1: getRegularTextStyle(color: ColorManager.black)),
+
     // Input Decoration Theme
     inputDecorationTheme: InputDecorationTheme(
       fillColor: ColorManager.primaryFill,
