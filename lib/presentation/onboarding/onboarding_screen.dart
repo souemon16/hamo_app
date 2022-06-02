@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hamo_app/presentation/resources/routes_manager.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
-import 'package:hamo_app/presentation/resources/assets_manager.dart';
+import 'package:hamo_app/presentation/onboarding/onboarding_viewmodel.dart';
 import 'package:hamo_app/presentation/resources/color_manager.dart';
-import 'package:hamo_app/presentation/resources/strings_manager.dart';
 import 'package:hamo_app/presentation/resources/values_manager.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -15,91 +13,103 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  late final List<SliderObject> _list = getSliderData;
-
+  final OnboardingViewModel _onBoardingViewModel = OnboardingViewModel();
   final PageController pageController = PageController(initialPage: 0);
 
-  int currentIndex = 0;
+  @override
+  void initState() {
+    _onBoardingViewModel.start();
+    super.initState();
+  }
 
-  List<SliderObject> getSliderData = [
-    SliderObject(AppStrings.onboardingString1, ImageAssets.onboardingImage1,
-        AppStrings.next),
-    SliderObject(AppStrings.onboardingString2, ImageAssets.onboardingImage2,
-        AppStrings.next),
-    SliderObject(AppStrings.onboardingString3, ImageAssets.onboardingImage3,
-        AppStrings.getStarted),
-  ];
+  @override
+  void dispose() {
+    _onBoardingViewModel.dispose();
+    pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorManager.secondary,
-      body: PageView.builder(
-        controller: pageController,
-        itemCount: _list.length,
-        onPageChanged: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-        itemBuilder: (context, index) {
-          return Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: AppPadding.p20, vertical: AppPadding.p20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Image(image: AssetImage(_list[index].image)),
-                    Text(
-                      _list[index].title,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headline1,
-                    ),
-                    Center(
-                      child: SmoothPageIndicator(
-                        controller: pageController,
-                        count: _list.length,
-                        effect: ExpandingDotsEffect(
-                          activeDotColor: ColorManager.primary,
-                          dotColor: ColorManager.dotColor,
-                          dotHeight: AppSize.s10,
-                          dotWidth: AppSize.s14,
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
-                ElevatedButton(
-                    onPressed: () {
-                      if (currentIndex == _list.length - 1) {
-                        Navigator.pushReplacementNamed(
-                            context, Routes.chooseSignRoute);
-                      } else {
-                        pageController.nextPage(
-                            duration: const Duration(milliseconds: 400),
-                            curve: Curves.bounceIn);
-                      }
-                    },
-                    child: Text(_list[index].buttonMsg)),
-              ],
+    return StreamBuilder<SliderViewObject>(
+        stream: _onBoardingViewModel.outputSliderViewObject,
+        builder: (context, snapshot) {
+          return Scaffold(
+            backgroundColor: ColorManager.secondary,
+            body: PageView.builder(
+              controller: pageController,
+              itemCount: _onBoardingViewModel.getSliderData.length,
+              onPageChanged: (index) {
+                _onBoardingViewModel.onPageChanged(index);
+              },
+              itemBuilder: (context, index) {
+                return OnboardingPage(
+                    onBoardingViewModel: _onBoardingViewModel,
+                    pageController: pageController,
+                    index: index);
+              },
             ),
           );
-        },
-      ),
-    );
+        });
   }
 }
 
-class SliderObject {
-  String title;
-  String image;
-  String buttonMsg;
+class OnboardingPage extends StatelessWidget {
+  OnboardingPage(
+      {Key? key,
+      required OnboardingViewModel onBoardingViewModel,
+      required this.pageController,
+      required this.index})
+      : _onBoardingViewModel = onBoardingViewModel,
+        super(key: key);
 
-  SliderObject(this.title, this.image, this.buttonMsg);
+  final OnboardingViewModel _onBoardingViewModel;
+  final PageController pageController;
+  int index;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppPadding.p20, vertical: AppPadding.p20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Image(
+                  image: AssetImage(
+                      _onBoardingViewModel.getSliderData[index].image)),
+              Text(
+                _onBoardingViewModel.getSliderData[index].title,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline1,
+              ),
+              Center(
+                child: SmoothPageIndicator(
+                  controller: pageController,
+                  count: _onBoardingViewModel.getSliderData.length,
+                  effect: ExpandingDotsEffect(
+                    activeDotColor: ColorManager.primary,
+                    dotColor: ColorManager.dotColor,
+                    dotHeight: AppSize.s10,
+                    dotWidth: AppSize.s14,
+                  ),
+                ),
+              ),
+            ],
+          )),
+          ElevatedButton(
+              onPressed: () {
+                _onBoardingViewModel.goNext(context, pageController);
+              },
+              child: Text(_onBoardingViewModel.getSliderData[index].buttonMsg)),
+        ],
+      ),
+    );
+  }
 }

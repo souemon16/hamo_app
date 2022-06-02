@@ -32,11 +32,14 @@ ThemeData getApplicationTheme() {
 
     //Elevated Button Theme
     elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-            shape: const StadiumBorder(),
-            primary: ColorManager.primary,
-            textStyle: getSemiBoldTextStyle(color: ColorManager.secondary),
-            minimumSize: const Size(100, 60))),
+      style: ElevatedButton.styleFrom(
+          shape: const StadiumBorder(),
+          primary: ColorManager.primary,
+          textStyle: getSemiBoldTextStyle(color: ColorManager.secondary),
+          minimumSize: const Size(100, 60),
+          elevation: AppSize.s4,
+          shadowColor: ColorManager.primary),
+    ),
 
     // Text Theme
     textTheme: TextTheme(
